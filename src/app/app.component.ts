@@ -16,8 +16,12 @@ import { MatList, MatListItem } from '@angular/material/list';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  showEmojiPicker = false;
   nickname: string;
-  message: string;
+  message: string = '';
+  messageHtml: string = '';
+  messageArray: string[] = [];
+  messageHtmlArray: string[] = [];
   messages: Message[] = [];
   private subscriptionMessages: Subscription;
   private subscriptionList: Subscription;
@@ -42,12 +46,54 @@ export class AppComponent {
     });
   }
 
+  toggleEmojiPicker() {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event) {
+    let emoticonElement = <HTMLElement>event.$event.target;
+
+    if (
+      !emoticonElement.style.backgroundImage ||
+      emoticonElement.style.backgroundImage === ''
+    ) {
+      emoticonElement = <HTMLElement>emoticonElement.firstChild;
+    }
+    const { message, messageHtml } = this;
+    const text = `${message}${event.emoji.native}`;
+
+    console.log(event.emoji);
+
+    this.messageArray.push(`${event.emoji.native}`);
+    this.messageHtmlArray.push(emoticonElement.outerHTML);
+    //const textHtml = `${messageHtml}${emoticonElement.outerHTML}`;
+
+    this.message = text;
+    //this.messageHtml = textHtml;
+    this.showEmojiPicker = false;
+  }
+
   send() {
+    this.messageHtml = this.message;
+    var i = 0;
+    for (i = 0; i < this.messageArray.length; i++) {
+      const aux = `${this.messageArray[i]}`;
+      console.log(aux);
+      console.log(this.messageHtmlArray[i]);
+      this.messageHtml = this.messageHtml.replace(
+        aux,
+        this.messageHtmlArray[i]
+      );
+    }
+
+    console.log(this.messageHtml);
+
     this.socketService.send({
       from: this.nickname,
-      message: this.message
+      message: this.messageHtml
     });
     this.message = '';
+    this.messageHtml = '';
   }
 
   ngOnDestroy() {

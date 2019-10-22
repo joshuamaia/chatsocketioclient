@@ -9,9 +9,18 @@
           <h4 mat-line>
             <strong>{{ m.from }}</strong>
           </h4>
-          <p mat-line>{{ m.message }}</p>
+          <p mat-line [innerHTML]="m.message | sanitizeHtml"></p>
         </mat-list-item>
       </mat-list>
+    </div>
+    <div>
+      <emoji-mart
+        class="emoji-mart"
+        set="emojione"
+        (emojiSelect)="addEmoji($event)"
+        *ngIf="showEmojiPicker"
+        title="Escolha seu emoji…"
+      ></emoji-mart>
     </div>
     <div
       fxFlex="20"
@@ -22,6 +31,11 @@
       <mat-form-field fxFlex="20">
         <input matInput placeholder="Nickname" [(ngModel)]="nickname" />
       </mat-form-field>
+
+      <button mat-button (click)="toggleEmojiPicker()">
+        <mat-icon>face</mat-icon>
+      </button>
+
       <mat-form-field fxFlex="60">
         <input
           matInput

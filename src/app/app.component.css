@@ -8,3 +8,9 @@
 .chat-messages {
   overflow: auto;
 }
+
+.emoji-mart {
+  position: fixed;
+  bottom: 130px;
+  right: 60px;
+}
